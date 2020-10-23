@@ -1,6 +1,6 @@
-# Federated Bayesian Optimization via Thompson Sampling
+# Code for the Paper:
+Zhongxiang Dai, Kian Hsiang Low and Patrick Jaillet. "[Federated Bayesian Optimization via Thompson Sampling.](https://daizhongxiang.github.io/papers/fbo.pdf)" In 34th Conference on Neural Information Processing Systems (NeurIPS-20), Dec 6-12, 2020.
 
-This repository is the python3 implementation of the paper: Federated Bayesian Optimization via Thompson Sampling, which is submitted to NeurIPS 2020.
 The code here is for the Landmine Detection real-world experiment (see Section 5.2 of the main paper).
 
 ## Description of the landmine detection dataset
