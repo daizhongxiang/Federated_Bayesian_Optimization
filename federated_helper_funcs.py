@@ -9,22 +9,50 @@ from tqdm import tqdm
 from scipydirect import minimize as mini_direct
 import pickle
 
-USE_DIRECT_OPTIMIZER = True
+# USE_DIRECT_OPTIMIZER = True
+USE_DIRECT_OPTIMIZER = False
 
 def acq_max(ac, gp, M, N, random_features, info_full_dist, info_ts, pt, ws, use_target_label, w_sample, \
             y_max, bounds, iteration, gp_samples=None, all_inc_taf=None, no_weight_learning=False):
-    para_dict={"gp":gp, "M":M, "N":N, "random_features":random_features, "info_full_dist":info_full_dist, \
+    para_dict={"gp":gp, "M":M, "N":N, "random_features":random_features, "info_gp_ucb":info_gp_ucb, \
                "info_ts":info_ts, "pt":pt, "ws":ws, "use_target_label":use_target_label, \
-               "w_sample":w_sample, "y_max":y_max, \
+               "tmp_ucb":None, "w_sample":w_sample, "federated_gps":federated_gps, "y_max":y_max, \
                "iteration":iteration, "gp_samples":gp_samples, "all_inc_taf":all_inc_taf, "no_weight_learning":no_weight_learning}
 
-    bound_list = []
-    for b in bounds:
-        bound_list.append(tuple(b))
+    if not USE_DIRECT_OPTIMIZER:
+        x_tries = np.random.uniform(bounds[:, 0], bounds[:, 1],
+                                     size=(10000, bounds.shape[0]))
 
-    res = mini_direct(ac, bound_list, para_dict=para_dict)
-    x_max = res["x"]
+        ys = []
+        for x in x_tries:
+            ys.append(ac(x.reshape(1, -1), para_dict))
+        ys = np.array(ys)
+        
+        x_max = x_tries[ys.argmax()]
+        max_acq = ys.max()
+
+        x_seeds = np.random.uniform(bounds[:, 0], bounds[:, 1],
+                                    size=(1, bounds.shape[0]))
+        for x_try in x_seeds:
+            res = minimize(lambda x: -ac(x.reshape(1, -1), para_dict),
+                           x_try.reshape(1, -1),
+                           bounds=bounds,
+                           method="L-BFGS-B")
+
+            if max_acq is None or -res.fun >= max_acq:
+                x_max = res.x
+                max_acq = -res.fun
     
+    else:
+        print("[Running the direct optimizer]")
+
+        bound_list = []
+        for b in bounds:
+            bound_list.append(tuple(b))
+
+        res = mini_direct(ac, bound_list, para_dict=para_dict)
+        x_max = res["x"]
+
     return x_max, None
 
 class UtilityFunction(object):
