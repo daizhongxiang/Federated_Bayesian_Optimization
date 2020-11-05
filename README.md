@@ -12,7 +12,7 @@ LandmineData.mat contains two 1-by-29 cell arrays "feature" and "label". Each ce
 The required packages include:
 1. standard packages such as scipy, numpy, sklearn, etc.
 2. GPy: `pip install GPy`
-3. (optional) scipydirect: this package is required only if you wish to use the DIRECT method to optimize the acquisition function (if you do, please set "USE_DIRECT_OPTIMIZER = True" in the script "federated_helper_funcs.py"). To install it to run our code:
+3. (optional) scipydirect: this package is needed only if you want to use the DIRECT method to optimize the acquisition function (if you do, please set "USE_DIRECT_OPTIMIZER = True" in the script "federated_helper_funcs.py"). Otherwise, the acquisition function is optimized using L-BFGS with multiple random restarts. To install it to run our code:
 	1. install scipydirect: `pip install scipydirect`
 	2. replace the content of the script "PYTHON_PATH/lib/python3.5/site-packages/scipydirect/__init__.py" with the content of the script "scipydirect_customized.py" in the "requirements" directory; this step is needed since we modified the interface of the scipydirect minimize function to make it usable by our acquisition function.
 
