@@ -32,7 +32,7 @@ def acq_max(ac, gp, M, N, random_features, info_full_dist, info_ts, pt, ws, use_
         max_acq = ys.max()
 
         x_seeds = np.random.uniform(bounds[:, 0], bounds[:, 1],
-                                    size=(1, bounds.shape[0]))
+                                    size=(50, bounds.shape[0]))
         for x_try in x_seeds:
             res = minimize(lambda x: -ac(x.reshape(1, -1), para_dict),
                            x_try.reshape(1, -1),
